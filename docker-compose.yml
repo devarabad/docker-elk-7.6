@@ -1,0 +1,130 @@
+version: "3"
+services:
+  # Elasticsearch (Cluster - 3 nodes)
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+  # Kibana
+  kibana:
+    # (Option 1) Use defaults - must combine with Option 3 or 4
+    # Using default image configuration
+    # image: docker.elastic.co/kibana/kibana:7.6.2
+    # (Option 2) Using a custom image - Dockerfile
+    build: kibana/.
+    container_name: kib01
+    ports:
+      - 5601:5601
+    # (Option 3) Environment variable configuration - combine with Option 1
+    # environment:
+    #   SERVER_NAME: kibana
+    #   ELASTICSEARCH_HOSTS: '["http://es01:9200","http://es02:9200","http://es03:9200"]'
+    # (Option 4) Bind-mounted configuration - combine with Option 1
+    # volumes:
+    #   # Windows 
+    #   #   * Enable shared files in docker settings
+    #   #   * Use absolute path
+    #   - C:/Users/{user}/docker-elk-7.6/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    #   # Mac | Linux
+    #   - kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - elastic
+    depends_on:
+      - es01
+      - es02
+      - es03
+
+  # Logstash
+  logstash:
+    # (Option 1) Use defaults - must combine with Option 3
+    # Using default image configuration
+    # image: docker.elastic.co/logstash/logstash:7.6.2
+    # (Option 2) Using a custom image - Dockerfile
+    build: logstash/.
+    container_name: log01
+    ports:
+      - 9600:9600
+      - 9563:9563
+    # (Option 3) Bind-mounted configuration - combine with Option 1
+    # volumes:
+    #   # Windows 
+    #   #   * Enable shared files in docker settings 
+    #   #   * Use absolute path
+    #   - C:/Users/{user}/docker-elk-7.6/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+    #   - C:/Users/{user}/docker-elk-7.6/logstash/pipeline:/usr/share/logstash/pipeline/
+    #   # Mac | Linux
+    #   - logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+    #   - logstash/pipeline/:/usr/share/logstash/pipeline/
+    networks:
+      - elastic
+    depends_on:
+      - es01
+      - es02
+      - es03
+
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
+  log01:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
