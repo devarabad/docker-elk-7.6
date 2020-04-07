@@ -98,6 +98,7 @@ services:
     ports:
       - 9600:9600
       - 9563:9563
+      - 12201:12201
     # (Option 3) Bind-mounted configuration - combine with Option 1
     # volumes:
     #   # Windows 
