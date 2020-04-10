@@ -1,6 +1,5 @@
-# Docker ELK Stack 7.6
-
-# README #
+# Docker ELK Stack 7.6 #
+Docker ELK Stack 7.6 (Elasticsearch Cluster with Basic Configuration for Kibana and Logstash)
 
 ## Requirements ##
 * Docker Installed
