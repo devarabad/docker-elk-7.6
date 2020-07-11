@@ -37,6 +37,8 @@ services:
         hard: -1
     volumes:
       - data02:/usr/share/elasticsearch/data
+    ports:
+      - 9201:9200
     networks:
       - elastic
   es03:
@@ -55,6 +57,8 @@ services:
         hard: -1
     volumes:
       - data03:/usr/share/elasticsearch/data
+    ports:
+      - 9202:9200
     networks:
       - elastic
 
@@ -74,7 +78,7 @@ services:
     #   ELASTICSEARCH_HOSTS: '["http://es01:9200","http://es02:9200","http://es03:9200"]'
     # (Option 4) Bind-mounted configuration - combine with Option 1
     # volumes:
-    #   # Windows 
+    #   # Windows
     #   #   * Enable shared files in docker settings
     #   #   * Use absolute path
     #   - C:/Users/{user}/docker-elk-7.6/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
@@ -101,8 +105,8 @@ services:
       - 12201:12201
     # (Option 3) Bind-mounted configuration - combine with Option 1
     # volumes:
-    #   # Windows 
-    #   #   * Enable shared files in docker settings 
+    #   # Windows
+    #   #   * Enable shared files in docker settings
     #   #   * Use absolute path
     #   - C:/Users/{user}/docker-elk-7.6/logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
     #   - C:/Users/{user}/docker-elk-7.6/logstash/pipeline:/usr/share/logstash/pipeline/
