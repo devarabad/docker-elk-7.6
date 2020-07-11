@@ -4,7 +4,7 @@ Docker ELK Stack 7.6 (Elasticsearch Cluster with Basic Configuration for Kibana 
 ## Requirements ##
 * Docker Installed
 * Docker resource memory must be 4GB or higher
-    * If you are using Docker Desktop, go to Settings > Advanced
+    * If you are using Docker Desktop, go to Settings > Advanced and set the memory to 4GB or higher
 
 ### Getting Started ###
 1. Go to the project directory
